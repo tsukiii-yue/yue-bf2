@@ -190,6 +190,7 @@ async def myLoop():
 	else:
 		print(streamer_name + ' is not live');
 
+with open("token.neddih","r",encoding="utf-8") as f:
+	not_token = f.read()
 
-
-client.run('ODcyMDI0MzY4NDI1ODY1MjE3.YQj1-g.0Ts4W8Xg8zsurRhxbzBmFe3d1Xw')
+client.run(not_token)
