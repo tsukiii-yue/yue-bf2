@@ -24,7 +24,7 @@ async def on_ready():
 	await client.change_presence(status=discord.Status.online, activity=game)
 	global Is_Notificated
 	Is_Notificated = False
-	myLoop.start()
+	
 	
 	#embed=discord.Embed(title="看完點擊下方【"+'<:fox:887613110326816850>'+"】領取生菜身分組", color=0xe999ff)
 	#cha = client.get_channel(887618038390734870)
@@ -79,16 +79,21 @@ async def on_message(message):
 		else:
 			dn = random.randint(0,4)
 			d = draw[dn]
+			Pickdn = ""
 			if dn==0:
-				await message.channel.send(f"{message.author.mention} 是「{d}」喔喔喔！！！✧｡٩(ˊᗜˋ)و✧*｡")
+				Pickdn = f"是「{d}」喔喔喔！！！✧｡٩(ˊᗜˋ)و✧*｡"
 			elif dn==1:
-				await message.channel.send(f"{message.author.mention} 是「{d}」喔！٩(๑❛ᴗ❛๑)۶")
+				Pickdn = f"是「{d}」喔喔喔！！！✧｡٩(ˊᗜˋ)و✧*｡"
 			elif dn==2:
-				await message.channel.send(f"{message.author.mention} 是「{d}」喔，平平淡淡不好不壞v(￣︶￣)y")
+				Pickdn = f"是「{d}」喔，平平淡淡不好不壞v(￣︶￣)y"
 			elif dn==3:
-				await message.channel.send(f"{message.author.mention} 是「{d}」喔(´･ω･`)")
+				Pickdn = f"是「{d}」喔(´･ω･`)"
 			elif dn==4:
-				await message.channel.send(f"{message.author.mention} (⊙０⊙)是「{d}」喔，拍拍你 (´･_･`)")
+				Pickdn = f"(⊙０⊙)是「{d}」喔，拍拍你 (´･_･`)"			
+			embed_sign=discord.Embed(title="問："+tmp[1], description=Pickdn, color=0xff9ecd)
+			embed_sign.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+			await message.channel.send(embed=embed_sign)
+
 	#你會幹嘛
 	if message.content.startswith('!你會幹嘛'):
 		print(f'{message.author}'+'used !你會幹嘛')
@@ -113,100 +118,7 @@ async def on_message(message):
 						+"- !抽籤[空格][文字] #沒打文字我會罵你喔，沒空格我不會理你"+'\n'
 						+"```")
 
-
-@client.event
-#新增身分組
-async def on_raw_reaction_add(data):
-	if str(data.emoji) == '<:fox:887613110326816850>' and data.message_id == 926404894141849652:
-		guild = client.get_guild(data.guild_id)
-		print(data.member,"add roles")
-		role = guild.get_role(887606492595896350)
-		await data.member.add_roles(role)
-
-@client.event
-#移除身分組
-async def on_raw_reaction_remove(data):
-	if str(data.emoji) == '<:fox:887613110326816850>' and data.message_id == 926404894141849652:
-		guild = client.get_guild(data.guild_id)
-		user = guild.get_member(data.user_id)
-		print(user,"rm roles")
-		role = guild.get_role(887606492595896350)
-		await user.remove_roles(role)
-
-
-
-
-
-
-@tasks.loop(seconds = 180) # repeat after every 60 seconds
-#查看是否在直播
-async def myLoop():
-	client_id = '3uax3yi5cdrkuenkcv5nhtq9uwd6ib'
-	client_secret = 'ad9g1autnd50hrwtpsrqyc2is5i2n2'
-	streamer_name = 'tsukiii122'
-
-	body = {
-		'client_id': client_id,
-		'client_secret': client_secret,
-		"grant_type": 'client_credentials'
-	}
-
-	r = requests.post('https://id.twitch.tv/oauth2/token', body)
-	keys = r.json();
-
-	#print(keys)
-
-	headers = {
-		'Client-ID': client_id,
-		'Authorization': 'Bearer ' + keys['access_token']
-	}
-
-	#print(headers)
-
-	stream = requests.get('https://api.twitch.tv/helix/streams?user_login=' + streamer_name, headers=headers)
-
-	stream_data = stream.json();
-
-	#print(stream_data);
-	
-	if len(stream_data['data']) == 1:
-		#global str1
-		#global stream_url
-		#global stream_game
-		#global stream_title
-		#global stream_user_name
-		global Is_Notificated
-
-		str1 = "玥玥終於開台啦！快去看 -->" + "https://www.twitch.tv/" + streamer_name
-		stream_url = stream_data['data'][0]['thumbnail_url']
-		#stream_url = stream_url.replace("{width}", "1076")
-		#stream_url = stream_url.replace("{height}", "605")
-		stream_url = stream_url.replace("-{width}x{height}", "")
-		stream_game = stream_data['data'][0]['game_name']
-		stream_title = stream_data['data'][0]['title']
-		stream_user_name = stream_data['data'][0]['user_name']
-		
-		if Is_Notificated == False :
-			embed=discord.Embed(title=stream_title, url="https://www.twitch.tv/tsukiii122", color=0xff9ecd)
-			embed.set_author(name=stream_user_name, icon_url="https://i.imgur.com/xQQUM1i.png")
-			embed.set_thumbnail(url="https://i.imgur.com/LslisUY.png")
-			embed.add_field(name="正在玩這個東東↓", value=stream_game, inline=True)
-			#embed.set_image(url=stream_url)
-			cha = client.get_channel(887604337109528586)
-			await cha.send(str1, embed=embed)
-			Is_Notificated = True
-			
-		else:
-			print("online,but notificated")
-	else:
-		Is_Notificated = False
-
-	#else:
-		#print(streamer_name + ' is not live');
-
-
-
-with open("token.neddih","r",encoding="utf-8") as f:
+with open("nono.neddih","r",encoding="utf-8") as f:
 	not_token = f.read()
 
 client.run(not_token)
