@@ -70,6 +70,12 @@ async def on_message(message):
 	if message.content == '玥玥怎麼樣':
 		await message.channel.send("玥玥很棒人好又溫柔可愛呀")
 		print(f'{message.author}'+'used 玥玥怎麼樣')
+	if message.content == '!test':
+		print("1")
+		print(f'{message.author}'+'author')
+		print(f'{message.author.id}'+'id')
+		print(f'{message.author.name}'+'name')
+		print(f'{message.author.display_name}'+'displayname')
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
 		tmp = message.content.split(" ",2)
@@ -91,7 +97,7 @@ async def on_message(message):
 			elif dn==4:
 				Pickdn = f"(⊙０⊙)是「{d}」喔，拍拍你 (´･_･`)"			
 			embed_sign=discord.Embed(title="問："+tmp[1], description=Pickdn, color=0xff9ecd)
-			embed_sign.set_author(name=message.author.name, icon_url=message.author.avatar_url)
+			embed_sign.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
 			await message.channel.send(embed=embed_sign)
 
 	#你會幹嘛

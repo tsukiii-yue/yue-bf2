@@ -51,6 +51,7 @@ async def on_message(message):
 				await cha.send(user_input[2])
 	if f'{type(message.channel)}' == "<class 'discord.channel.DMChannel'>":
 		print(f'{message.channel.recipient}'+'私訊：'+message.content)
+		
 	if message.content.startswith('說'):
 		tmp = message.content.split(" ",2)
 		print(f'{message.author}'+'used 說')
@@ -70,10 +71,12 @@ async def on_message(message):
 	if message.content == '玥玥怎麼樣':
 		await message.channel.send("玥玥很棒人好又溫柔可愛呀")
 		print(f'{message.author}'+'used 玥玥怎麼樣')
+
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
 		tmp = message.content.split(" ",2)
 		print(f'{message.author}'+'used 抽籤')
+		
 		if len(tmp) == 1:
 			await message.channel.send(f"{message.author.mention} 你算什麼東西？我是說，你要算什麼東西？")
 		else:
@@ -89,6 +92,11 @@ async def on_message(message):
 				await message.channel.send(f"{message.author.mention} 是「{d}」喔(´･ω･`)")
 			elif dn==4:
 				await message.channel.send(f"{message.author.mention} (⊙０⊙)是「{d}」喔，拍拍你 (´･_･`)")
+			
+			embed=discord.Embed(title=message.author.id+"問"：, description=ruprosjjojp?)
+			embed.add_field(name=抽籤：, value=答, inline=False)
+			await message.channel.send(embed=embed)
+
 	#你會幹嘛
 	if message.content.startswith('!你會幹嘛'):
 		print(f'{message.author}'+'used !你會幹嘛')
