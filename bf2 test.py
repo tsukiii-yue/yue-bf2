@@ -84,24 +84,54 @@ async def on_message(message):
 	if message.content == '!簽':
 		sign_date = str(datetime.date.today())
 
-	#取user資料
-		user_data = {"id": f'{message.author.id}',"Name": f'{message.author.name}',"name+num":f'{message.author}',"money": 0,"date":sign_date}
-
-
-	#Read json
+		#Read json
 		with open("user_data.json",'r') as f:
 			file2 = json.loads(f.read())
+			check_id = 0
+			print(len(file2["user"]))
+			for i in range(len(file2["user"])):
+				j = file2["user"][i]
+				if j.get("id") == f'{message.author.id}':
+					check_id = 1
+					if j.get("date") == sign_date:
+						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
+					else:
+						embed=discord.Embed(title="簽到成功", description="", color=0xb8feff)
+						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+						await message.channel.send(embed=embed)
+
+						file2["user"][i]["date"]=sign_date
+						with open("user_data.json",'w') as f:
+							file2 = json.dumps(file2)
+							f.write(file2)
+							f.close()
+
+			if check_id == 0:
+				await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
+			f.close()
+			
+	if message.content == '!報到':
+
+	#取user資料
+		user_data = {"id": f'{message.author.id}',"Name": f'{message.author.name}',"name+num":f'{message.author}',"money": 1000,"date":""}	
+		#Read json
+		with open("user_data.json",'r') as f:
+			file2 = json.loads(f.read())
+			check_id = 0
 			for i in file2["user"]:
 				if i.get("id") == f'{message.author.id}':
-					if i.get("date") == sign_date:
-						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
+					check_id = 1
+					await message.channel.send(f"{message.author.mention}你已經報到過了喔")
+			if check_id == 0:
+				await message.channel.send(f"{message.author.mention}報到成功，獲得1000")
+				file2["user"].append(user_data)
 				
-			#file2["user"].append(user_data)
+			f.close()
 		
-		"""with open("user_data.json",'w') as f:
+		with open("user_data.json",'w') as f:
 			file2 = json.dumps(file2)
 			f.write(file2)
-			f.close()"""
+			f.close()
 
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
