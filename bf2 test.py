@@ -26,8 +26,7 @@ async def on_ready():
 	await client.change_presence(status=discord.Status.online, activity=game)
 	global Is_Notificated
 	Is_Notificated = False
-	
-	
+
 	#embed=discord.Embed(title="看完點擊下方【"+'<:fox:887613110326816850>'+"】領取生菜身分組", color=0xe999ff)
 	#cha = client.get_channel(887618038390734870)
 	#m = await cha.send(embed=embed)
@@ -81,6 +80,7 @@ async def on_message(message):
 		print(f'{client.user}'+'clientuser')
 		print(f'{client.user.avatar_url}'+'clientuseravatarurl')
 	#簽到抽卡
+	#簽
 	if message.content == '!簽':
 		sign_date = str(datetime.date.today())
 
@@ -88,7 +88,6 @@ async def on_message(message):
 		with open("user_data.json",'r') as f:
 			file2 = json.loads(f.read())
 			check_id = 0
-			print(len(file2["user"]))
 			for i in range(len(file2["user"])):
 				j = file2["user"][i]
 				if j.get("id") == f'{message.author.id}':
@@ -96,20 +95,39 @@ async def on_message(message):
 					if j.get("date") == sign_date:
 						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
 					else:
-						embed=discord.Embed(title="簽到成功", description="", color=0xb8feff)
+						#抽
+						lottery = "abbbcccccccccccccccc"
+						count_money = 0
+
+						for i in range(10):
+							dn = random.randint(0,19)
+							Ldn = lottery[dn]
+							if Ldn == "a":
+								count_money += 1000
+							if Ldn == "b":
+								count_money += 250
+							if Ldn == "c":
+								count_money += 50
+
+						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}", color=0xb8feff)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
 						await message.channel.send(embed=embed)
 
-						file2["user"][i]["date"]=sign_date
+						j["date"]=sign_date
+						j["money"] += count_money
 						with open("user_data.json",'w') as f:
 							file2 = json.dumps(file2)
 							f.write(file2)
 							f.close()
+						break
 
 			if check_id == 0:
 				await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
 			f.close()
-			
+
+	
+
+
 	if message.content == '!報到':
 
 	#取user資料
