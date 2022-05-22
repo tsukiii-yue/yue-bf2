@@ -72,13 +72,13 @@ async def on_message(message):
 		await message.channel.send("玥玥很棒人好又溫柔可愛呀")
 		print(f'{message.author}'+'used 玥玥怎麼樣')
 	if message.content == '!test':
-		print("1")
 		print(f'{message.author}'+'author')
 		print(f'{message.author.id}'+'id')
 		print(f'{message.author.name}'+'name')
 		print(f'{message.author.display_name}'+'displayname')
 		print(f'{client.user}'+'clientuser')
 		print(f'{client.user.avatar_url}'+'clientuseravatarurl')
+		await message.channel.send('<:waw:903535703659536384><:waw:903535703659536384><:waw:903535703659536384>')
 	#簽到抽卡
 	#簽
 	if message.content == '!簽':
@@ -98,20 +98,28 @@ async def on_message(message):
 						#抽
 						lottery = "abbbcccccccccccccccc"
 						count_money = 0
+						count_pic = ""
 
 						for i in range(10):
 							dn = random.randint(0,19)
 							Ldn = lottery[dn]
 							if Ldn == "a":
 								count_money += 1000
+								count_pic += '<:wow_1000:977904107744530512> '
 							if Ldn == "b":
 								count_money += 250
+								count_pic += '<:wow_250:977905164843360256> '
 							if Ldn == "c":
 								count_money += 50
+								count_pic += '<:wow_50:977905164604297236> '
 
-						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}", color=0xb8feff)
+						a_money = j["money"] + count_money
+						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}，目前擁有 {a_money}", color=0xffdd00)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+						embed.set_footer(text="非猷 80% | 小運氣 15% | 歐皇 5%")
 						await message.channel.send(embed=embed)
+						await message.channel.send(count_pic)
+
 
 						j["date"]=sign_date
 						j["money"] += count_money
@@ -140,6 +148,7 @@ async def on_message(message):
 				if i.get("id") == f'{message.author.id}':
 					check_id = 1
 					await message.channel.send(f"{message.author.mention}你已經報到過了喔")
+
 			if check_id == 0:
 				await message.channel.send(f"{message.author.mention}報到成功，獲得1000")
 				file2["user"].append(user_data)

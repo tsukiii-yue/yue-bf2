@@ -88,28 +88,34 @@ async def on_message(message):
 					check_id = 1
 					if j.get("date") == sign_date:
 						a_money = j["money"]
-						embed=discord.Embed(title="已簽", description=f"目前擁有 {a_money}", color=0xb8feff)
+						embed=discord.Embed(title="已簽", description=f"目前擁有 {a_money}", color=0xffdd00)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
 						await message.channel.send(embed=embed)
 					else:
 						#抽
 						lottery = "abbbcccccccccccccccc"
 						count_money = 0
+						count_pic = ""
 
 						for i in range(10):
 							dn = random.randint(0,19)
 							Ldn = lottery[dn]
 							if Ldn == "a":
 								count_money += 1000
+								count_pic += '<:wow_1000:977904107744530512> '
 							if Ldn == "b":
 								count_money += 250
+								count_pic += '<:wow_250:977905164843360256> '
 							if Ldn == "c":
 								count_money += 50
+								count_pic += '<:wow_50:977905164604297236> '
+						
 						a_money = j["money"] + count_money
-						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}", color=0xb8feff)
+						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}，目前擁有 {a_money}", color=0xffdd00)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-						embed.set_footer(text=f"目前擁有 {a_money}")
+						embed.set_footer(text="非猷 80% | 小運氣 15% | 歐皇 5%")
 						await message.channel.send(embed=embed)
+						await message.channel.send(count_pic)
 
 						j["date"]=sign_date
 						j["money"] += count_money
