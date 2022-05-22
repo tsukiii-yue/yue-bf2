@@ -2,6 +2,8 @@ import discord
 import random
 import time
 import requests
+import datetime
+import json
 from discord.ext import commands
 from discord.ext import tasks
 #client是我們與Discord連結的橋樑
@@ -42,7 +44,7 @@ async def on_message(message):
 
 	#如果以「說」開頭
 	if message.content.startswith('說') and f'{type(message.channel)}' == "<class 'discord.channel.DMChannel'>":
-		if f'{message.channel.recipient}' == '玥玥ㄚ#7445':
+		if f'{message.channel.recipient}' == 'Sugarrr#6130':
 			# 說 [channelID] [text]
 			print(message)
 			user_input = message.content.split(" ")
@@ -78,6 +80,29 @@ async def on_message(message):
 		print(f'{message.author.display_name}'+'displayname')
 		print(f'{client.user}'+'clientuser')
 		print(f'{client.user.avatar_url}'+'clientuseravatarurl')
+	#簽到抽卡
+	if message.content == '!簽':
+		sign_date = str(datetime.date.today())
+
+	#取user資料
+		user_data = {"id": f'{message.author.id}',"Name": f'{message.author.name}',"name+num":f'{message.author}',"money": 0,"date":sign_date}
+
+
+	#Read json
+		with open("user_data.json",'r') as f:
+			file2 = json.loads(f.read())
+			for i in file2["user"]:
+				if i.get("id") == f'{message.author.id}':
+					if i.get("date") == sign_date:
+						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
+				
+			#file2["user"].append(user_data)
+		
+		"""with open("user_data.json",'w') as f:
+			file2 = json.dumps(file2)
+			f.write(file2)
+			f.close()"""
+
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
 		tmp = message.content.split(" ",2)

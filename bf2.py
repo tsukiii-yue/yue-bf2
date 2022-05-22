@@ -42,7 +42,7 @@ async def on_message(message):
 
 	#如果以「說」開頭
 	if message.content.startswith('說') and f'{type(message.channel)}' == "<class 'discord.channel.DMChannel'>":
-		if f'{message.channel.recipient}' == '玥玥ㄚ#7445':
+		if f'{message.channel.recipient}' == 'Sugarrr#6130':
 			# 說 [channelID] [text]
 			print(message)
 			user_input = message.content.split(" ")
