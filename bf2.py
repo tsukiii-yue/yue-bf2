@@ -87,7 +87,10 @@ async def on_message(message):
 				if j.get("id") == f'{message.author.id}':
 					check_id = 1
 					if j.get("date") == sign_date:
-						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
+						a_money = j["money"]
+						embed=discord.Embed(title="已簽", description=f"目前擁有 {a_money}", color=0xb8feff)
+						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+						await message.channel.send(embed=embed)
 					else:
 						#抽
 						lottery = "abbbcccccccccccccccc"
@@ -102,9 +105,10 @@ async def on_message(message):
 								count_money += 250
 							if Ldn == "c":
 								count_money += 50
-
+						a_money = j["money"] + count_money
 						embed=discord.Embed(title="簽到成功", description=f"獲得 {count_money}", color=0xb8feff)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+						embed.set_footer(text=f"目前擁有 {a_money}")
 						await message.channel.send(embed=embed)
 
 						j["date"]=sign_date
@@ -135,7 +139,7 @@ async def on_message(message):
 					check_id = 1
 					await message.channel.send(f"{message.author.mention}你已經報到過了喔")
 			if check_id == 0:
-				await message.channel.send(f"{message.author.mention}報到成功，獲得1000")
+				await message.channel.send(f"{message.author.mention}報到成功，獲得1000，你可以簽到了")
 				file2["user"].append(user_data)
 				
 			f.close()
@@ -177,7 +181,7 @@ async def on_message(message):
 		embed.set_author(name="我會...", icon_url=client.user.avatar_url)	
 		embed.add_field(name="⛦玥玥台",value="⠀開台通知&給生菜身分組", inline=False)
 		embed.add_field(name="⛦文字互動",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說[空格][文字]` -> 逼我說...", inline=False)
-		embed.add_field(name="⛦玩的東東",value="⠀`!簽到` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤", inline=False)
+		embed.add_field(name="⛦玩的東東",value="⠀`!簽` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤", inline=False)
 		embed.add_field(name="⛦隱藏功能",value="⠀都說是隱藏功能了", inline=False)
 		#embed.add_field(name="嗨",value="我會對你嗨", inline=True)
 		#embed.add_field(name="早安",value="我會對你說早安", inline=True)
