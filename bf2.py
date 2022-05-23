@@ -1,15 +1,18 @@
+from certifi import contents
 import discord
 import random
 import time
 import requests
 import datetime
 import json
+from discord_components import Button, ButtonStyle, DiscordComponents, ComponentsBot
 from discord.ext import commands
 from discord.ext import tasks
 #client是我們與Discord連結的橋樑
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
+DiscordComponents(client)
 
 
 
@@ -73,6 +76,87 @@ async def on_message(message):
 	if message.content == '玥玥怎麼樣':
 		await message.channel.send("玥玥很棒人好又溫柔可愛呀")
 		print(f'{message.author}'+'used 玥玥怎麼樣')
+	if message.content == '!猜拳':
+		components = [
+			[Button(label='剪刀',
+                                   custom_id='op1',
+                                   emoji="✂️",
+                                   style=ButtonStyle.green),
+                            Button(label='石頭',
+                                   custom_id='op2',
+                                   emoji="✊",
+                                   style=ButtonStyle.grey),
+							Button(label='布',
+                                   custom_id='op3',
+                                   emoji="🧻",
+                                   style=ButtonStyle.blue)]]
+		w_del = await message.channel.send("入場費200，猜贏得500，平手退100",components=components)
+		dn = (random.randint(0,8))
+
+
+		with open("user_data.json",'r') as f:
+			file2 = json.loads(f.read())
+			check_id = 0
+			m = 0
+			for i in range(len(file2["user"])):
+				j = file2["user"][i]
+				if j.get("id") == f'{message.author.id}':
+					check_id = 1
+					interaction = await client.wait_for("button_click")
+					if interaction.component.label == '剪刀':
+						if dn == 0:
+							str1 = "我出石頭啦嫩"
+							m = -200
+						elif dn == 1:
+							str1 = "我出剪刀，真有默契"
+							m = 100
+						elif dn == 2:
+							str1 = "我出布，喔不"
+							m = 500
+					if interaction.component.label == '石頭':
+						if dn == 0:
+							str1 = "我出石頭，真有默契"
+							m = 100
+						elif dn == 1:
+							str1 = "我出剪刀，喔不"
+							m = 500
+						elif dn == 2:
+							str1 = "我出布啦嫩"
+							m = -200
+					if interaction.component.label == '布':
+						if dn == 0:
+							str1 = "我出石頭，喔不"
+							m = 500
+						elif dn == 1:
+							str1 = "我出剪刀啦嫩"
+							m = -200
+						elif dn == 2:
+							str1 = "我出布，真有默契"
+							m = 100
+
+					a_money = j["money"] + m
+					j["money"] += m
+					embed=discord.Embed(title=str1, description=f"目前擁有 {a_money}", color=0xad8fff)
+					embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+					embed.set_footer(text="入場費200，猜贏得500，平手退100")
+					await message.channel.send(embed=embed)
+					await w_del.delete()
+					with open("user_data.json",'w') as f:
+						file2 = json.dumps(file2)
+						f.write(file2)
+						f.close()
+					break
+
+			if check_id == 0:
+				await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
+			f.close()
+
+
+	
+	
+	
+	
+	
 	#簽到抽卡
 	#簽
 	if message.content == '!簽':
@@ -88,7 +172,7 @@ async def on_message(message):
 					check_id = 1
 					if j.get("date") == sign_date:
 						a_money = j["money"]
-						embed=discord.Embed(title="已簽", description=f"目前擁有 {a_money}", color=0xffdd00)
+						embed=discord.Embed(title="今日已簽", description=f"目前擁有 {a_money}", color=0xffdd00)
 						embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
 						await message.channel.send(embed=embed)
 					else:
@@ -145,7 +229,7 @@ async def on_message(message):
 					check_id = 1
 					await message.channel.send(f"{message.author.mention}你已經報到過了喔")
 			if check_id == 0:
-				await message.channel.send(f"{message.author.mention}報到成功，獲得1000，你可以簽到了")
+				await message.channel.send(f"{message.author.mention}報到成功，獲得1000，你可以簽到或玩小遊戲了")
 				file2["user"].append(user_data)
 				
 			f.close()
