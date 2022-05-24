@@ -23,7 +23,7 @@ DiscordComponents(client)
 #當機器人完成啟動時
 async def on_ready():
 	print('目前登入身份：',client.user)
-	game = discord.Game('指令"!你會幹嘛"查看功能')
+	game = discord.Game('"!你會幹嘛"查看功能')
 	#這邊設定機器當前的狀態文字
 	#discord.Status.<狀態>，可以是online,offline,idle,dnd,invisible
 	await client.change_presence(status=discord.Status.online, activity=game)
@@ -81,7 +81,7 @@ async def on_message(message):
 		print(f'{message.author.display_name}'+'displayname')
 		print(f'{client.user}'+'clientuser')
 		print(f'{client.user.avatar_url}'+'clientuseravatarurl')
-		await message.channel.send('<:waw:903535703659536384><:waw:903535703659536384><:waw:903535703659536384>')
+		
 	
 	if message.content == '!test':
 		components = [
@@ -164,11 +164,11 @@ async def on_message(message):
 		#Read json
 		with open("user_data.json",'r', encoding='utf-8') as f:
 			file2 = json.loads(f.read())
-			list_of_i = [(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0')]
+			list_of_i = [(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0')]
 			for i in range(len(file2["user"])):
 				j = file2["user"][i]
 				list_of_i.sort(key = lambda s :s[0], reverse = True)
-				for k in range(5):
+				for k in range(7):
 					compare_money = list_of_i[k][0]
 					if j.get("money") > compare_money :
 						list_of_i.insert(k,(j.get("money"),j.get("name+num")))
@@ -176,10 +176,10 @@ async def on_message(message):
 						break
 			print(list_of_i)
 			f.close()
-		embed=discord.Embed(title="土豪榜", description="><", color=0xffdd00)
-		embed.add_field(name="No.",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說[空格][文字]` -> 逼我說...", inline=True)
-		embed.add_field(name="id",value="⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤", inline=True)
-		embed.add_field(name="money",value="⠀都說是隱藏功能了", inline=True)
+		embed=discord.Embed(title="土豪們", description="`沒上榜請再接再厲><`", color=0xff0000)
+		embed.add_field(name="No.",value="1."+'\n'+"2."+'\n'+"3."+'\n'+"4."+'\n'+"5."+'\n'+"6."+'\n'+"7.", inline=True)
+		embed.add_field(name="id",value=list_of_i[0][1]+'\n'+list_of_i[1][1]+'\n'+list_of_i[2][1]+'\n'+list_of_i[3][1]+'\n'+list_of_i[4][1]+'\n'+list_of_i[5][1]+'\n'+list_of_i[6][1], inline=True)
+		embed.add_field(name="money",value=str(list_of_i[0][0])+'\n'+str(list_of_i[1][0])+'\n'+str(list_of_i[2][0])+'\n'+str(list_of_i[3][0])+'\n'+str(list_of_i[4][0])+'\n'+str(list_of_i[5][0])+'\n'+str(list_of_i[6][0]), inline=True)
 		await message.channel.send(embed=embed)
 
 		
@@ -196,6 +196,8 @@ async def on_message(message):
 				j = file2["user"][i]
 				if j.get("id") == f'{message.author.id}':
 					check_id = 1
+					j["name"] = f'{message.author.name}'
+					j["name+num"] = f'{message.author}'
 					if j.get("date") == sign_date:
 						await message.channel.send(f"{message.author.mention}你今天簽到過了喔")
 					else:

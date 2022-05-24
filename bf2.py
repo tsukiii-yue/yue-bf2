@@ -90,14 +90,14 @@ async def on_message(message):
                                    custom_id='op3',
                                    emoji="🧻",
                                    style=ButtonStyle.blue)]]
-		w_del = await message.channel.send("入場費200，猜贏得500，平手退100",components=components)
-		dn = (random.randint(0,8))
-
+		w_del = await message.channel.send("入場費200，猜贏得700，輸再扣100",components=components)
+		dn = (random.randint(0,8))%3
+		m = -200
 
 		with open("user_data.json",'r') as f:
 			file2 = json.loads(f.read())
 			check_id = 0
-			m = 0
+			str1 = ""
 			for i in range(len(file2["user"])):
 				j = file2["user"][i]
 				if j.get("id") == f'{message.author.id}':
@@ -106,39 +106,39 @@ async def on_message(message):
 					if interaction.component.label == '剪刀':
 						if dn == 0:
 							str1 = "我出石頭啦嫩"
-							m = -200
+							m += -100
 						elif dn == 1:
 							str1 = "我出剪刀，真有默契"
-							m = 100
+							
 						elif dn == 2:
 							str1 = "我出布，喔不"
-							m = 500
+							m += 700
 					if interaction.component.label == '石頭':
 						if dn == 0:
 							str1 = "我出石頭，真有默契"
-							m = 100
+							
 						elif dn == 1:
 							str1 = "我出剪刀，喔不"
-							m = 500
+							m += 700
 						elif dn == 2:
 							str1 = "我出布啦嫩"
-							m = -200
+							m += -100
 					if interaction.component.label == '布':
 						if dn == 0:
 							str1 = "我出石頭，喔不"
-							m = 500
+							m += 700
 						elif dn == 1:
 							str1 = "我出剪刀啦嫩"
-							m = -200
+							m += -100
 						elif dn == 2:
 							str1 = "我出布，真有默契"
-							m = 100
+						
 
 					a_money = j["money"] + m
 					j["money"] += m
 					embed=discord.Embed(title=str1, description=f"目前擁有 {a_money}", color=0xad8fff)
 					embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-					embed.set_footer(text="入場費200，猜贏得500，平手退100")
+					embed.set_footer(text="入場費200，猜贏得700，輸再扣100")
 					await message.channel.send(embed=embed)
 					await w_del.delete()
 					with open("user_data.json",'w') as f:
@@ -152,7 +152,29 @@ async def on_message(message):
 			f.close()
 
 
-	
+	#rank
+	if message.content == '!rank':
+
+		#Read json
+		with open("user_data.json",'r', encoding='utf-8') as f:
+			file2 = json.loads(f.read())
+			list_of_i = [(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0')]
+			for i in range(len(file2["user"])):
+				j = file2["user"][i]
+				list_of_i.sort(key = lambda s :s[0], reverse = True)
+				for k in range(7):
+					compare_money = list_of_i[k][0]
+					if j.get("money") > compare_money :
+						list_of_i.insert(k,(j.get("money"),j.get("name+num")))
+						del(list_of_i[-1])
+						break
+			print(list_of_i)
+			f.close()
+		embed=discord.Embed(title="土豪們", description="`沒上榜請再接再厲><`", color=0xff0000)
+		embed.add_field(name="No.",value="1."+'\n'+"2."+'\n'+"3."+'\n'+"4."+'\n'+"5."+'\n'+"6."+'\n'+"7.", inline=True)
+		embed.add_field(name="id",value=list_of_i[0][1]+'\n'+list_of_i[1][1]+'\n'+list_of_i[2][1]+'\n'+list_of_i[3][1]+'\n'+list_of_i[4][1]+'\n'+list_of_i[5][1]+'\n'+list_of_i[6][1], inline=True)
+		embed.add_field(name="money",value=str(list_of_i[0][0])+'\n'+str(list_of_i[1][0])+'\n'+str(list_of_i[2][0])+'\n'+str(list_of_i[3][0])+'\n'+str(list_of_i[4][0])+'\n'+str(list_of_i[5][0])+'\n'+str(list_of_i[6][0]), inline=True)
+		await message.channel.send(embed=embed)
 	
 	
 	
@@ -170,6 +192,8 @@ async def on_message(message):
 				j = file2["user"][i]
 				if j.get("id") == f'{message.author.id}':
 					check_id = 1
+					j["name"] = f'{message.author.name}'
+					j["name+num"] = f'{message.author}'
 					if j.get("date") == sign_date:
 						a_money = j["money"]
 						embed=discord.Embed(title="今日已簽", description=f"目前擁有 {a_money}", color=0xffdd00)
@@ -271,7 +295,7 @@ async def on_message(message):
 		embed.set_author(name="我會...", icon_url=client.user.avatar_url)	
 		embed.add_field(name="⛦玥玥台",value="⠀開台通知&給生菜身分組", inline=False)
 		embed.add_field(name="⛦文字互動",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說[空格][文字]` -> 逼我說...", inline=False)
-		embed.add_field(name="⛦玩的東東",value="⠀`!簽` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤", inline=False)
+		embed.add_field(name="⛦玩的東東",value="⠀`!簽` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤"+'\n'+"⠀`!猜拳` -> 玩猜拳入場費200"+'\n'+"⠀`!rank` -> 查看土豪榜", inline=False)
 		embed.add_field(name="⛦隱藏功能",value="⠀都說是隱藏功能了", inline=False)
 		#embed.add_field(name="嗨",value="我會對你嗨", inline=True)
 		#embed.add_field(name="早安",value="我會對你說早安", inline=True)
