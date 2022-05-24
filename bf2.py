@@ -50,7 +50,7 @@ async def on_message(message):
 		if f'{message.channel.recipient}' == 'Sugarrr#6130':
 			# 說 [channelID] [text]
 			print(message)
-			user_input = message.content.split(" ")
+			user_input = message.content.split(" ",2)
 			if len(user_input) == 3:
 				cha = client.get_channel(int(user_input[1]))
 				await cha.send(user_input[2])
@@ -332,7 +332,7 @@ async def on_message(message):
 
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
-		tmp = message.content.split(" ",2)
+		tmp = message.content.split(" ",1)
 		print(f'{message.author}'+'used 抽籤')
 		if len(tmp) == 1:
 			await message.channel.send(f"{message.author.mention} 你算什麼東西？我是說，你要算什麼東西？")
