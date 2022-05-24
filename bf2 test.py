@@ -158,8 +158,30 @@ async def on_message(message):
 				await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
 			f.close()
 
+#rank
+	if message.content == '!rank':
 
-		
+		#Read json
+		with open("user_data.json",'r', encoding='utf-8') as f:
+			file2 = json.loads(f.read())
+			list_of_i = [(0,'0'),(0,'0'),(0,'0'),(0,'0'),(0,'0')]
+			for i in range(len(file2["user"])):
+				j = file2["user"][i]
+				list_of_i.sort(key = lambda s :s[0], reverse = True)
+				for k in range(5):
+					compare_money = list_of_i[k][0]
+					if j.get("money") > compare_money :
+						list_of_i.insert(k,(j.get("money"),j.get("name+num")))
+						del(list_of_i[-1])
+						break
+			print(list_of_i)
+			f.close()
+		embed=discord.Embed(title="土豪榜", description="><", color=0xffdd00)
+		embed.add_field(name="No.",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說[空格][文字]` -> 逼我說...", inline=True)
+		embed.add_field(name="id",value="⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤", inline=True)
+		embed.add_field(name="money",value="⠀都說是隱藏功能了", inline=True)
+		await message.channel.send(embed=embed)
+
 		
 	#簽到抽卡
 	#簽
