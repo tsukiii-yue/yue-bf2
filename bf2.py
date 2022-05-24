@@ -23,7 +23,7 @@ DiscordComponents(client)
 #當機器人完成啟動時
 async def on_ready():
 	print('目前登入身份：',client.user)
-	game = discord.Game('指令"!你會幹嘛"查看功能')
+	game = discord.Game('"!你會幹嘛"查看功能')
 	#這邊設定機器當前的狀態文字
 	#discord.Status.<狀態>，可以是online,offline,idle,dnd,invisible
 	await client.change_presence(status=discord.Status.online, activity=game)
@@ -101,6 +101,8 @@ async def on_message(message):
 			for i in range(len(file2["user"])):
 				j = file2["user"][i]
 				if j.get("id") == f'{message.author.id}':
+					if j.get("money") < 200:
+						await message.channel.send("窮鬼，滾OvO")
 					check_id = 1
 					interaction = await client.wait_for("button_click")
 					if interaction.component.label == '剪刀':
@@ -136,6 +138,9 @@ async def on_message(message):
 
 					a_money = j["money"] + m
 					j["money"] += m
+					if j["money"] < 0:
+						j["money"] =  0
+						a_money = 0
 					embed=discord.Embed(title=str1, description=f"目前擁有 {a_money}", color=0xad8fff)
 					embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
 					embed.set_footer(text="入場費200，猜贏得700，輸再扣100")
@@ -150,7 +155,68 @@ async def on_message(message):
 			if check_id == 0:
 				await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
 			f.close()
+#賭
+	if message.content.startswith('!賭'):
+		tmp = message.content.split(" ",2)
+		if (tmp[1] != "藍" and tmp[1] != "紅") or tmp[2].isdigit()==False or len(tmp)!=3:
+			await message.channel.send(f"{message.author.mention}格式輸入錯誤 ex.`!賭 藍 100`")
+		elif int(tmp[2])<0:
+				await message.channel.send(f"{message.author.mention}別想騙我(σﾟ∀ﾟ)σ")
+		else:
+			if tmp[1]=="藍":
+				g = 0
+			elif tmp[1]=="紅":
+				g = 1
 
+			with open("user_data.json",'r') as f:
+				file2 = json.loads(f.read())
+				check_id = 0
+				for i in range(len(file2["user"])):
+					j = file2["user"][i]
+					if j.get("id") == f'{message.author.id}':
+						if j.get("money") < int(tmp[2]):
+							await message.channel.send("窮鬼，滾OvO")
+							break
+						check_id = 1
+
+						#黑紅隨機
+						draw = ["🟦","🟥"]
+						dn = random.randint(0,1)
+						if g == dn:
+							m = int(tmp[2])
+							m = m*2
+							a_money = j["money"] + m
+							j["money"] += m
+							embed=discord.Embed(title="結果", description=f"獲得 {int(tmp[2])}x2", color=0x00e658)
+							embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+							embed.add_field(name="顏色是",value=draw[dn], inline=True)
+							embed.add_field(name="目前擁有",value=f"{a_money}", inline=True)
+							await message.channel.send(embed=embed)
+						else:
+							m = int(tmp[2])
+							a_money = j["money"] - m
+							j["money"] -= m
+						
+							if j["money"] < 0:
+								j["money"] =  0
+								a_money = 0
+							embed=discord.Embed(title="結果", description=f"獲得 {int(tmp[2])}x0", color=0x949494)
+							embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+							embed.add_field(name="顏色是",value=draw[dn], inline=True)
+							embed.add_field(name="目前擁有",value=f"{a_money}", inline=True)
+							await message.channel.send(embed=embed)
+
+
+
+						with open("user_data.json",'w') as f:
+							file2 = json.dumps(file2)
+							f.write(file2)
+							f.close()
+						break
+
+				if check_id == 0:
+					await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
+				f.close()
 
 	#rank
 	if message.content == '!rank':
@@ -294,8 +360,8 @@ async def on_message(message):
 		embed=discord.Embed(color=0x8fb4ff)
 		embed.set_author(name="我會...", icon_url=client.user.avatar_url)	
 		embed.add_field(name="⛦玥玥台",value="⠀開台通知&給生菜身分組", inline=False)
-		embed.add_field(name="⛦文字互動",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說[空格][文字]` -> 逼我說...", inline=False)
-		embed.add_field(name="⛦玩的東東",value="⠀`!簽` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤"+'\n'+"⠀`!猜拳` -> 玩猜拳入場費200"+'\n'+"⠀`!rank` -> 查看土豪榜", inline=False)
+		embed.add_field(name="⛦文字互動",value="⠀`嗨` -> 我會對你說嗨"+'\n'+"⠀`早安` -> 我會對你說早安"+'\n'+"⠀`玥玥怎麼樣` -> 我會告訴你玥玥怎麼樣"+'\n'+"⠀`說 [文字]` -> 逼我說...", inline=False)
+		embed.add_field(name="⛦玩的東東",value="⠀`!簽` -> 每日一抽"+'\n'+"⠀`!抽籤[空格][想問的事情]` -> 抽支吉凶籤"+'\n'+"⠀`!猜拳` -> 玩猜拳入場費200"+'\n'+"⠀`!賭 [藍/紅] [金額]` -> 猜中顏色金額*2"+'\n'++"⠀`!rank` -> 查看土豪榜", inline=False)
 		embed.add_field(name="⛦隱藏功能",value="⠀都說是隱藏功能了", inline=False)
 		#embed.add_field(name="嗨",value="我會對你嗨", inline=True)
 		#embed.add_field(name="早安",value="我會對你說早安", inline=True)

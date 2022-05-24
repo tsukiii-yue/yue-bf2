@@ -80,7 +80,7 @@ async def on_message(message):
 		print(f'{message.author.name}'+'name')
 		print(f'{message.author.display_name}'+'displayname')
 		print(f'{client.user}'+'clientuser')
-		print(f'{client.user.avatar_url}'+'clientuseravatarurl')
+		print(f'{client.user.avatar_url}'+'clientuseravatarurl')		
 		
 	
 	if message.content == '!test':
@@ -266,9 +266,72 @@ async def on_message(message):
 			f.write(file2)
 			f.close()
 
+	if message.content.startswith('!賭'):
+		tmp = message.content.split(" ",2)
+		if (tmp[1] != "藍" and tmp[1] != "紅") or tmp[2].isdigit()==False or len(tmp)!=3:
+			await message.channel.send(f"{message.author.mention}格式輸入錯誤 ex.`!賭 藍 100`")
+		elif int(tmp[2])<0:
+				await message.channel.send(f"{message.author.mention}別想騙我(σﾟ∀ﾟ)σ")
+		else:
+			if tmp[1]=="藍":
+				g = 0
+			elif tmp[1]=="紅":
+				g = 1
+
+			with open("user_data.json",'r') as f:
+				file2 = json.loads(f.read())
+				check_id = 0
+				for i in range(len(file2["user"])):
+					j = file2["user"][i]
+					if j.get("id") == f'{message.author.id}':
+						if j.get("money") < int(tmp[2]):
+							await message.channel.send("窮鬼，滾OvO")
+							break
+						check_id = 1
+
+						#黑紅隨機
+						draw = ["🟦","🟥"]
+						dn = random.randint(0,1)
+						if g == dn:
+							m = int(tmp[2])
+							m = m*2
+							a_money = j["money"] + m
+							j["money"] += m
+							embed=discord.Embed(title="結果", description=f"獲得 {int(tmp[2])}x2", color=0x00e658)
+							embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+							embed.add_field(name="顏色是",value=draw[dn], inline=True)
+							embed.add_field(name="目前擁有",value=f"{a_money}", inline=True)
+							await message.channel.send(embed=embed)
+						else:
+							m = int(tmp[2])
+							a_money = j["money"] - m
+							j["money"] -= m
+						
+							if j["money"] < 0:
+								j["money"] =  0
+								a_money = 0
+							embed=discord.Embed(title="結果", description=f"獲得 {int(tmp[2])}x0", color=0x949494)
+							embed.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
+							embed.add_field(name="顏色是",value=draw[dn], inline=True)
+							embed.add_field(name="目前擁有",value=f"{a_money}", inline=True)
+							await message.channel.send(embed=embed)
+
+
+
+						with open("user_data.json",'w') as f:
+							file2 = json.dumps(file2)
+							f.write(file2)
+							f.close()
+						break
+
+				if check_id == 0:
+					await message.channel.send(f"{message.author.mention}你還沒報到，輸入'!報到'報到")
+				f.close()
+
 	if message.content.startswith('!抽籤'):
 		draw=["大吉","小吉","中","小凶","大凶"]
 		tmp = message.content.split(" ",2)
+
 		print(f'{message.author}'+'used 抽籤')
 		if len(tmp) == 1:
 			await message.channel.send(f"{message.author.mention} 你算什麼東西？我是說，你要算什麼東西？")
