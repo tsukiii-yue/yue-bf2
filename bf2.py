@@ -158,7 +158,11 @@ async def on_message(message):
 #賭
 	if message.content.startswith('!賭'):
 		tmp = message.content.split(" ",2)
-		if (tmp[1] != "藍" and tmp[1] != "紅") or tmp[2].isdigit()==False or len(tmp)!=3:
+		if tmp[1] != "藍" and tmp[1] != "紅":
+			await message.channel.send(f"{message.author.mention}格式輸入錯誤 ex.`!賭 藍 100`")
+		elif len(tmp)!=3:
+			await message.channel.send(f"{message.author.mention}格式輸入錯誤 ex.`!賭 藍 100`")
+		elif tmp[2].isdigit()==False:
 			await message.channel.send(f"{message.author.mention}格式輸入錯誤 ex.`!賭 藍 100`")
 		elif int(tmp[2])<0:
 				await message.channel.send(f"{message.author.mention}別想騙我(σﾟ∀ﾟ)σ")
